@@ -62,6 +62,7 @@ const DefaultLoader = () => (
 function Map({ children, styles, ...props }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreGL.Map | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
   const { resolvedTheme } = useTheme();
@@ -75,7 +76,11 @@ function Map({ children, styles, ...props }: MapProps) {
   );
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || !containerRef.current) return;
 
     const mapStyle =
       resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
@@ -100,7 +105,7 @@ function Map({ children, styles, ...props }: MapProps) {
       mapInstance.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -112,15 +117,19 @@ function Map({ children, styles, ...props }: MapProps) {
     }
   }, [resolvedTheme]);
 
-  const isLoading = !isLoaded || !isStyleLoaded;
+  const isLoading = !isMounted || !isLoaded || !isStyleLoaded;
 
   return (
     <MapContext.Provider
-      value={{ map: mapRef.current, isLoaded: isLoaded && isStyleLoaded }}
+      value={{
+        map: mapRef.current,
+        isLoaded: isMounted && isLoaded && isStyleLoaded,
+      }}
     >
       <div ref={containerRef} className="relative w-full h-full">
         {isLoading && <DefaultLoader />}
-        {children}
+        {/* guard against hydration error */}
+        {isMounted && children}
       </div>
     </MapContext.Provider>
   );
@@ -651,7 +660,6 @@ function CompassButton({ onClick }: { onClick?: () => void }) {
 type MapPopupProps = {
   longitude: number;
   latitude: number;
-  open?: boolean;
   onClose?: () => void;
   children: ReactNode;
   className?: string;
@@ -661,23 +669,19 @@ type MapPopupProps = {
 function MapPopup({
   longitude,
   latitude,
-  open = true,
   onClose,
   children,
   className,
-  closeButton = true,
+  closeButton = false,
   ...popupOptions
 }: MapPopupProps) {
-  const { map, isLoaded } = useMap();
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const { map } = useMap();
   const popupRef = useRef<MapLibreGL.Popup | null>(null);
-  const [mounted, setMounted] = useState(false);
+
+  const container = useMemo(() => document.createElement("div"), []);
 
   useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    const container = document.createElement("div");
-    containerRef.current = container;
+    if (!map) return;
 
     const popup = new MapLibreGL.Popup({
       offset: 12,
@@ -686,30 +690,23 @@ function MapPopup({
     })
       .setMaxWidth("none")
       .setDOMContent(container)
-      .setLngLat([longitude, latitude]);
+      .setLngLat([longitude, latitude])
+      .addTo(map);
 
-    popup.on("close", () => onClose?.());
+    const onCloseProp = () => onClose?.();
+
+    popup.on("close", onCloseProp);
 
     popupRef.current = popup;
-    setMounted(true);
 
     return () => {
-      popup.remove();
+      popup.off("close", onCloseProp);
+      if (popup.isOpen()) {
+        popup.remove();
+      }
       popupRef.current = null;
-      containerRef.current = null;
-      setMounted(false);
     };
-  }, [isLoaded, map]);
-
-  useEffect(() => {
-    if (!popupRef.current || !map) return;
-
-    if (open) {
-      popupRef.current.addTo(map);
-    } else {
-      popupRef.current.remove();
-    }
-  }, [open, map, mounted]);
+  }, [map]);
 
   useEffect(() => {
     popupRef.current?.setLngLat([longitude, latitude]);
@@ -719,8 +716,6 @@ function MapPopup({
     popupRef.current?.remove();
     onClose?.();
   };
-
-  if (!mounted || !containerRef.current) return null;
 
   return createPortal(
     <div
@@ -742,7 +737,7 @@ function MapPopup({
       )}
       {children}
     </div>,
-    containerRef.current
+    container
   );
 }
 

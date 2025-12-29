@@ -407,12 +407,6 @@ export default function ApiReferencePage() {
               description: "Latitude coordinate for popup position.",
             },
             {
-              name: "open",
-              type: "boolean",
-              default: "true",
-              description: "Controls popup visibility.",
-            },
-            {
               name: "onClose",
               type: "() => void",
               description: "Callback when popup is closed.",
@@ -430,7 +424,7 @@ export default function ApiReferencePage() {
             {
               name: "closeButton",
               type: "boolean",
-              default: "true",
+              default: "false",
               description: "Show a close button in the popup.",
             },
           ]}
