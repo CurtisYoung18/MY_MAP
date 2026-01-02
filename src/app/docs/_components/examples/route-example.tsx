@@ -29,7 +29,7 @@ export function RouteExample() {
         {stops.map((stop, index) => (
           <MapMarker key={stop.name} longitude={stop.lng} latitude={stop.lat}>
             <MarkerContent>
-              <div className="size-4.5 rounded-full bg-blue-500 border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold">
+              <div className="size-4.5 rounded-full bg-blue-500 border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-semibold">
                 {index + 1}
               </div>
             </MarkerContent>

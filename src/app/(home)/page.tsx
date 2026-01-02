@@ -8,8 +8,8 @@ export default function Page() {
     <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       <Header className="max-w-5xl mx-auto w-full" />
 
-      <main className="flex-1 px-6 py-16 mx-auto w-full">
-        <section className="max-w-5xl w-full mx-auto space-y-12">
+      <main className="flex-1 px-6 py-20 mx-auto w-full">
+        <section className="max-w-5xl w-full mx-auto space-y-20">
           <Hero />
           <Examples />
         </section>

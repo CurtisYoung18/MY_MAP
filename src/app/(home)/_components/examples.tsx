@@ -10,7 +10,7 @@ import {
   MarkerTooltip,
   MapRoute,
 } from "@/registry/map";
-import { Truck, Flame, TrendingUp, Zap, Coffee } from "lucide-react";
+import { Truck, Flame, TrendingUp, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const analyticsData = [
@@ -60,11 +60,11 @@ export function Examples() {
   } | null>(null);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 animate-fade-in delay-400">
-      {/* Widget 1: Analytics - spans 2 cols, 2 rows */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in delay-400">
+      {/* Widget 1: Analytics */}
       <ExampleCard
-        label="Analytics Dashboard"
-        className="col-span-1 sm:col-span-2 sm:row-span-2 h-[300px] sm:h-[432px]"
+        label="Analytics"
+        className="sm:col-span-2 aspect-2/1"
         delay="delay-400"
       >
         {/* Stats Panel */}
@@ -72,7 +72,7 @@ export function Examples() {
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
             Active Users
           </div>
-          <div className="text-2xl font-bold leading-tight">2,847</div>
+          <div className="text-2xl font-semibold leading-tight">2,847</div>
           <div className="flex items-center gap-1 mt-1">
             <TrendingUp className="size-3 text-emerald-500" />
             <span className="text-xs text-emerald-500">+12.5%</span>
@@ -127,7 +127,9 @@ export function Examples() {
               <MarkerTooltip>
                 <div className="text-center">
                   <div className="font-medium">{loc.city}</div>
-                  <div className="text-emerald-500 font-bold">{loc.users}</div>
+                  <div className="text-emerald-500 font-semibold">
+                    {loc.users}
+                  </div>
                   <div className="text-[10px] text-muted-foreground">
                     active users
                   </div>
@@ -138,8 +140,113 @@ export function Examples() {
         </Map>
       </ExampleCard>
 
-      {/* Widget 2: EV Charging */}
-      <ExampleCard label="EV Charging" className="h-[208px]" delay="delay-500">
+      {/* Widget 2: Delivery */}
+      <ExampleCard label="Delivery" className="aspect-square" delay="delay-500">
+        <Map center={[-0.1076, 51.517]} zoom={11.2}>
+          <MapRoute
+            coordinates={[
+              [-0.1276, 51.5074],
+              [-0.12, 51.512],
+              [-0.105, 51.518],
+              [-0.095, 51.522],
+              [-0.0876, 51.5274],
+            ]}
+            width={4}
+            color="#4285F4"
+          />
+          <MapMarker longitude={-0.1276} latitude={51.5074}>
+            <MarkerContent>
+              <div className="size-3.5 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
+              <MarkerLabel>Store</MarkerLabel>
+            </MarkerContent>
+          </MapMarker>
+          <MapMarker longitude={-0.105} latitude={51.518}>
+            <MarkerContent>
+              <div className="bg-blue-500 rounded-full p-1.5 shadow-lg">
+                <Truck className="size-3 text-white" />
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>On the way</MarkerTooltip>
+          </MapMarker>
+          <MapMarker longitude={-0.0876} latitude={51.5274}>
+            <MarkerContent>
+              <div className="size-3.5 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
+              <MarkerLabel>Home</MarkerLabel>
+            </MarkerContent>
+          </MapMarker>
+        </Map>
+      </ExampleCard>
+
+      {/* Widget 3: Trending */}
+      <ExampleCard label="Trending" className="aspect-square" delay="delay-600">
+        <Map center={[-73.99, 40.735]} zoom={9.5}>
+          <MapMarker longitude={-73.9857} latitude={40.7484}>
+            <MarkerContent>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute size-12 rounded-full bg-orange-500/30" />
+                <div className="absolute size-7 rounded-full bg-orange-500/40" />
+                <div className="bg-linear-to-br from-orange-500 to-red-500 rounded-full p-1.5 shadow-lg shadow-orange-500/50">
+                  <Flame className="size-3.5 text-white" />
+                </div>
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>
+              <div className="text-center">
+                <div className="font-medium">Times Square</div>
+                <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                  <TrendingUp className="size-3 text-green-500" />
+                  <span className="text-xs text-green-500">2.4k visitors</span>
+                </div>
+              </div>
+            </MarkerTooltip>
+          </MapMarker>
+          <MapMarker longitude={-73.9654} latitude={40.7829}>
+            <MarkerContent>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute size-10 rounded-full bg-rose-500/30" />
+                <div className="bg-linear-to-br from-rose-500 to-pink-500 rounded-full p-1.5 shadow-lg shadow-rose-500/50">
+                  <Flame className="size-3 text-white" />
+                </div>
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>
+              <div className="text-center">
+                <div className="font-medium">Central Park</div>
+                <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                  <TrendingUp className="size-3 text-green-500" />
+                  <span className="text-xs text-green-500">1.8k visitors</span>
+                </div>
+              </div>
+            </MarkerTooltip>
+          </MapMarker>
+          <MapMarker longitude={-74.0445} latitude={40.6892}>
+            <MarkerContent>
+              <div className="relative flex items-center justify-center">
+                <div className="absolute size-8 rounded-full bg-amber-500/30" />
+                <div className="bg-linear-to-br from-amber-500 to-yellow-500 rounded-full p-1 shadow-lg shadow-amber-500/50">
+                  <Flame className="size-2.5 text-white" />
+                </div>
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>
+              <div className="text-center">
+                <div className="font-medium">Statue of Liberty</div>
+                <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                  <TrendingUp className="size-3 text-green-500" />
+                  <span className="text-xs text-green-500">890 visitors</span>
+                </div>
+              </div>
+            </MarkerTooltip>
+          </MapMarker>
+        </Map>
+      </ExampleCard>
+
+      {/* Widget 4: EV Charging */}
+      <ExampleCard
+        label="EV Charging"
+        className="aspect-square"
+        delay="delay-700"
+      >
         <Map center={[-122.425, 37.777]} zoom={11.5}>
           <MapMarker longitude={-122.4194} latitude={37.7749}>
             <MarkerContent>
@@ -214,8 +321,12 @@ export function Examples() {
         </Map>
       </ExampleCard>
 
-      {/* Widget 3: Navigation */}
-      <ExampleCard label="Locate Me" className="h-[208px]" delay="delay-600">
+      {/* Widget 5: Locate Me */}
+      <ExampleCard
+        label="Locate Me"
+        className="aspect-square"
+        delay="delay-800"
+      >
         <Map center={[77.5946, 12.9716]} zoom={10.5}>
           <MapControls showZoom={false} showLocate onLocate={setUserLocation} />
           {userLocation && (
@@ -232,163 +343,6 @@ export function Examples() {
               <MarkerTooltip>Your Location</MarkerTooltip>
             </MapMarker>
           )}
-        </Map>
-      </ExampleCard>
-
-      {/* Widget 4: Delivery Tracking */}
-      <ExampleCard label="Delivery" className="h-[208px]" delay="delay-500">
-        <Map center={[-0.1076, 51.517]} zoom={11.2}>
-          <MapRoute
-            coordinates={[
-              [-0.1276, 51.5074],
-              [-0.12, 51.512],
-              [-0.105, 51.518],
-              [-0.095, 51.522],
-              [-0.0876, 51.5274],
-            ]}
-            width={4}
-            color="#4285F4"
-          />
-          <MapMarker longitude={-0.1276} latitude={51.5074}>
-            <MarkerContent>
-              <div className="size-3.5 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-              <MarkerLabel>Store</MarkerLabel>
-            </MarkerContent>
-          </MapMarker>
-          <MapMarker longitude={-0.105} latitude={51.518}>
-            <MarkerContent>
-              <div className="bg-blue-500 rounded-full p-1.5 shadow-lg">
-                <Truck className="size-3 text-white" />
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>On the way</MarkerTooltip>
-          </MapMarker>
-          <MapMarker longitude={-0.0876} latitude={51.5274}>
-            <MarkerContent>
-              <div className="size-3.5 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-              <MarkerLabel>Home</MarkerLabel>
-            </MarkerContent>
-          </MapMarker>
-        </Map>
-      </ExampleCard>
-
-      {/* Widget 5: Trending Now */}
-      <ExampleCard label="Trending" className="h-[208px]" delay="delay-600">
-        <Map center={[-73.99, 40.735]} zoom={9.5}>
-          <MapMarker longitude={-73.9857} latitude={40.7484}>
-            <MarkerContent>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute size-12 rounded-full bg-orange-500/30" />
-                <div className="absolute size-7 rounded-full bg-orange-500/40" />
-                <div className="bg-linear-to-br from-orange-500 to-red-500 rounded-full p-1.5 shadow-lg shadow-orange-500/50">
-                  <Flame className="size-3.5 text-white" />
-                </div>
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-center">
-                <div className="font-medium">Times Square</div>
-                <div className="flex items-center justify-center gap-1 text-muted-foreground">
-                  <TrendingUp className="size-3 text-green-500" />
-                  <span className="text-xs text-green-500">2.4k visitors</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
-          <MapMarker longitude={-73.9654} latitude={40.7829}>
-            <MarkerContent>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute size-10 rounded-full bg-rose-500/30" />
-                <div className="bg-linear-to-br from-rose-500 to-pink-500 rounded-full p-1.5 shadow-lg shadow-rose-500/50">
-                  <Flame className="size-3 text-white" />
-                </div>
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-center">
-                <div className="font-medium">Central Park</div>
-                <div className="flex items-center justify-center gap-1 text-muted-foreground">
-                  <TrendingUp className="size-3 text-green-500" />
-                  <span className="text-xs text-green-500">1.8k visitors</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
-          <MapMarker longitude={-74.0445} latitude={40.6892}>
-            <MarkerContent>
-              <div className="relative flex items-center justify-center">
-                <div className="absolute size-8 rounded-full bg-amber-500/30" />
-                <div className="bg-linear-to-br from-amber-500 to-yellow-500 rounded-full p-1 shadow-lg shadow-amber-500/50">
-                  <Flame className="size-2.5 text-white" />
-                </div>
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-center">
-                <div className="font-medium">Statue of Liberty</div>
-                <div className="flex items-center justify-center gap-1 text-muted-foreground">
-                  <TrendingUp className="size-3 text-green-500" />
-                  <span className="text-xs text-green-500">890 visitors</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
-        </Map>
-      </ExampleCard>
-
-      {/* Widget 6: Nearby Cafes */}
-      <ExampleCard label="Nearby" className="h-[208px]" delay="delay-700">
-        <Map center={[2.3522, 48.8566]} zoom={13}>
-          <MapMarker longitude={2.3522} latitude={48.8566}>
-            <MarkerContent>
-              <div className="bg-amber-700 rounded-full p-1.5 shadow-lg shadow-amber-700/30">
-                <Coffee className="size-3 text-white" />
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-xs space-y-0.5">
-                <div className="font-medium">Café de Flore</div>
-                <div className="flex items-center gap-1">
-                  <span className="text-amber-600">★ 4.8</span>
-                  <span className="text-muted-foreground">• Open now</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
-
-          <MapMarker longitude={2.3472} latitude={48.8606}>
-            <MarkerContent>
-              <div className="bg-amber-700 rounded-full p-1.5 shadow-lg shadow-amber-700/30">
-                <Coffee className="size-3 text-white" />
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-xs space-y-0.5">
-                <div className="font-medium">Les Deux Magots</div>
-                <div className="flex items-center gap-1">
-                  <span className="text-amber-600">★ 4.6</span>
-                  <span className="text-muted-foreground">• Open now</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
-
-          <MapMarker longitude={2.3592} latitude={48.8526}>
-            <MarkerContent>
-              <div className="bg-amber-700 rounded-full p-1.5 shadow-lg shadow-amber-700/30">
-                <Coffee className="size-3 text-white" />
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <div className="text-xs space-y-0.5">
-                <div className="font-medium">Coutume Café</div>
-                <div className="flex items-center gap-1">
-                  <span className="text-amber-600">★ 4.7</span>
-                  <span className="text-muted-foreground">• Closes 6pm</span>
-                </div>
-              </div>
-            </MarkerTooltip>
-          </MapMarker>
         </Map>
       </ExampleCard>
     </div>

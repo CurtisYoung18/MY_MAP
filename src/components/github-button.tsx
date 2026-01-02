@@ -44,7 +44,9 @@ export async function StarCount() {
   return (
     <>
       {formattedCount && (
-        <span className="text-xs text-muted-foreground">{formattedCount}</span>
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {formattedCount}
+        </span>
       )}
     </>
   );

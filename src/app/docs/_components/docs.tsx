@@ -18,7 +18,7 @@ interface DocsHeaderProps {
 export function DocsHeader({ title, description }: DocsHeaderProps) {
   return (
     <div className="space-y-3">
-      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
       <p className="text-lg text-muted-foreground leading-relaxed">
         {description}
       </p>

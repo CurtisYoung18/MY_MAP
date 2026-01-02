@@ -34,15 +34,14 @@ function CopyButton({ text }: { text: string }) {
 
 export function Hero() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight animate-fade-up">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight animate-fade-up">
           Beautiful maps, made simple.
         </h1>
-        <p className="text-foreground/80 text-lg max-w-2xl mx-auto animate-fade-up delay-100">
-          Free & open source map components. Zero config, one command setup.
-          Built on MapLibre GL, styled with Tailwind, works seamlessly with
-          shadcn/ui.
+        <p className="text-foreground/80 text-lg max-w-xl mx-auto animate-fade-up delay-100">
+          Beautifully designed, Open source map components. Zero config. One
+          command setup.
         </p>
       </div>
 

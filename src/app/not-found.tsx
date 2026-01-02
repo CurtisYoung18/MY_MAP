@@ -17,7 +17,9 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">Lost on the map</h1>
+          <h1 className="text-4xl font-semibold tracking-tight">
+            Lost on the map
+          </h1>
           <p className="text-muted-foreground text-lg">
             The page you&apos;re looking for doesn&apos;t exist or has been
             moved.
