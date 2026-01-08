@@ -10,7 +10,7 @@
   </p>
   
   <p>
-    <a href="https://mapcn.dev">Get Started</a> •
+    <a href="https://mapcn.dev/docs">Get Started</a> •
     <a href="https://mapcn.dev/docs/installation">Installation</a> •
     <a href="https://mapcn.dev/docs/basic-map">Examples</a>
   </p>
