@@ -193,15 +193,9 @@
 .delay-800 { animation-delay: 800ms; }
 .delay-900 { animation-delay: 900ms; }
 
-/* Shiki dual theme support for code blocks */
-html .shiki,
-html .shiki span {
-  color: var(--shiki-light) !important;
-  background-color: transparent !important;
-}
-
-html.dark .shiki,
-html.dark .shiki span {
-  color: var(--shiki-dark) !important;
-  background-color: transparent !important;
+/* 确保 assistant 页面占满屏幕 */
+.assistant-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "amap": {
+      "command": "npx",
+      "args": ["tsx", "/Users/curtis/Desktop/Tools/mapcn/mcp-amap-server/src/index.ts"],
+      "env": {
+        "AMAP_API_KEY": "5e134c41622f7986b9af6847a2a9b273"
+      }
+    }
+  }
+}

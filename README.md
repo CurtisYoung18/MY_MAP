@@ -1,50 +1,85 @@
-<div align="center">
-  <img src="public/banner.png" alt="mapcn banner" />
-  <br>
-  <br>
-  <p>
-    Free & open source map components. Zero config, one command setup.<br/>
-    Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
-  </p>
-  
-  <p>
-    <a href="https://mapcn.dev/docs">Get Started</a> •
-    <a href="https://mapcn.dev/docs/installation">Installation</a> •
-    <a href="https://mapcn.dev/docs/basic-map">Examples</a>
-  </p>
-</div>
+# MY_MAP - 智能地图助手
 
----
+AI 驱动的智能地图助手，支持全国路线规划和沿途 POI 推荐。
 
-## Features
+## 功能特点
 
-- 🎨 **Theme-aware** — Automatically adapts to light/dark mode
-- 🎯 **Zero config** — Works out of the box with sensible defaults
-- 📦 **shadcn/ui compatible** — Uses the same patterns and styling conventions
-- 🗺️ **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
-- 🧩 **Composable** — Build complex map UIs with simple, declarative components
-- 📍 **Markers & Popups** — Rich marker system with popups, tooltips, and labels
-- 🛤️ **Routes** — Draw routes and paths on your maps
-- 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
+- **智能路线规划** - 支持全国城市驾车路线规划，包含途经点、距离、时间和过路费估算
+- **沿途推荐** - 根据规划路线智能推荐沿途餐厅、咖啡厅、加油站等服务设施
+- **可视化展示** - 路线和推荐地点实时在地图上标注
+- **自然语言交互** - 用自然语言描述出行需求，AI 理解并规划最佳行程
 
-## Basemap Terms of Service
+## 技术栈
 
-This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
+- **前端**: Next.js 16 + React 19 + TypeScript + Tailwind CSS
+- **地图**: MapLibre GL
+- **AI**: MiniMax M2
+- **地图服务**: 高德地图 API
 
-- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
-- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider.
+## 快速开始
 
-## Contributing
+### 1. 安装依赖
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```bash
+npm install
+```
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### 2. 配置环境变量
+
+创建 `.env.local` 文件：
+
+```env
+AMAP_API_KEY=your_amap_api_key
+MINIMAX_API_KEY=your_minimax_api_key
+```
+
+### 3. 启动开发服务器
+
+```bash
+npm run dev
+```
+
+访问 http://localhost:3000 即可使用。
+
+## 使用示例
+
+- "从深圳南山科技园到龙华大浪，途经宝安沙井"
+- "从北京西站到故宫怎么走"
+- "上海外滩到浦东机场，推荐沿途的咖啡厅"
+- "广州塔到白云机场，沿途有什么好吃的"
+
+## API 说明
+
+### 高德地图 API
+
+需要在[高德开放平台](https://lbs.amap.com/)注册并获取 Web 服务 API Key。
+
+免费配额：
+- 路径规划：每日 5000 次
+- 地理编码：每日 5000 次
+- POI 搜索：每日 5000 次
+
+### MiniMax API
+
+需要在 [MiniMax 开放平台](https://platform.minimaxi.com/) 注册并获取 API Key。
+
+## 项目结构
+
+```
+src/
+├── app/
+│   ├── api/           # API 路由
+│   │   ├── amap/      # 高德地图 API
+│   │   └── chat/      # AI 聊天 API
+│   ├── assistant/     # 地图助手页面
+│   └── page.tsx       # 首页（重定向）
+├── components/        # UI 组件
+├── lib/               # 工具函数
+│   ├── amap.ts        # 高德地图封装
+│   └── minimax.ts     # MiniMax AI 封装
+└── registry/          # 地图组件
+```
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+MIT
