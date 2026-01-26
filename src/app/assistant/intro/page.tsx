@@ -69,31 +69,31 @@ export default function AssistantIntroPage() {
           
           <div className="grid md:grid-cols-2 gap-8">
             {/* Route Planning Screenshot */}
-            <div className="group relative rounded-xl overflow-hidden border border-border shadow-lg bg-background">
-              <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-black text-white text-sm font-medium shadow-md">
-                路线规划
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">路线规划</h3>
+              <div className="rounded-xl overflow-hidden border border-border shadow-lg bg-background">
+                <Image
+                  src="/screenshots/assistant-route.png"
+                  alt="路线规划演示"
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
               </div>
-              <Image
-                src="/screenshots/assistant-route.png"
-                alt="路线规划演示"
-                width={800}
-                height={600}
-                className="w-full h-auto"
-              />
             </div>
             
             {/* POI Recommendation Screenshot */}
-            <div className="group relative rounded-xl overflow-hidden border border-border shadow-lg bg-background">
-              <div className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full bg-black text-white text-sm font-medium shadow-md">
-                沿途推荐
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold">沿途推荐</h3>
+              <div className="rounded-xl overflow-hidden border border-border shadow-lg bg-background">
+                <Image
+                  src="/screenshots/assistant-poi.png"
+                  alt="沿途推荐演示"
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
               </div>
-              <Image
-                src="/screenshots/assistant-poi.png"
-                alt="沿途推荐演示"
-                width={800}
-                height={600}
-                className="w-full h-auto"
-              />
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Send, Loader2, Navigation, Utensils, Plus, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -28,11 +29,11 @@ function AssistantHeader({
   return (
     <header className="w-full h-14 border-b border-border bg-background/95 backdrop-blur">
       <nav className="flex size-full items-center justify-between px-4">
-        <div className="flex items-center gap-2">
+        <Link href="/assistant/intro" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Navigation className="size-5 text-primary" />
           <span className="font-bold tracking-tight">MY_MAP</span>
           <span className="text-xs text-muted-foreground hidden sm:inline">智能地图助手</span>
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
           {hasMessages && (
             <button
@@ -425,6 +426,17 @@ export default function AssistantPage() {
               showZoom
               showLocate
               showFullscreen
+              onLocate={(coords) => {
+                console.log("定位成功:", coords);
+              }}
+              onLocateError={(error) => {
+                const messages: Record<number, string> = {
+                  1: "您已拒绝定位权限，请在浏览器设置中允许定位",
+                  2: "无法获取位置信息，请检查设备定位功能",
+                  3: "定位请求超时，请重试",
+                };
+                alert(messages[error.code] || "定位失败，请重试");
+              }}
             />
           </Map>
 
