@@ -38,7 +38,7 @@ function AssistantHeader({
           {hasMessages && (
             <button
               onClick={onNewChat}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-border hover:bg-accent transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 active:scale-95 transition-all duration-150"
             >
               <Plus className="size-4" />
               <span className="hidden sm:inline">新对话</span>
@@ -251,7 +251,7 @@ export default function AssistantPage() {
                     <button
                       key={i}
                       onClick={() => setInput(query)}
-                      className="w-full text-left px-3 py-2 rounded-lg border border-border hover:bg-accent transition-colors text-sm"
+                      className="w-full text-left px-3 py-2.5 rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 hover:shadow-sm active:scale-[0.98] transition-all duration-150 text-sm"
                     >
                       {query}
                     </button>
@@ -302,13 +302,13 @@ export default function AssistantPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="输入你的出行需求，支持全国城市..."
-                className="flex-1 px-4 py-2.5 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                className="flex-1 px-4 py-2.5 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-150 text-sm"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 hover:shadow-md active:scale-90 transition-all duration-150"
               >
                 <Send className="w-4 h-4" />
               </button>

@@ -643,7 +643,10 @@ function ControlButton({
       aria-label={label}
       type="button"
       className={cn(
-        "flex items-center justify-center size-8 hover:bg-accent dark:hover:bg-accent/40 transition-colors",
+        "flex items-center justify-center size-8 transition-all duration-150",
+        "hover:bg-accent dark:hover:bg-accent/40",
+        "active:scale-90 active:bg-accent/70",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
         disabled && "opacity-50 pointer-events-none cursor-not-allowed"
       )}
       disabled={disabled}
@@ -706,7 +709,12 @@ function MapControls({
         setWaitingForLocation(false);
       },
       (error) => {
-        console.error("Error getting location:", error);
+        const errorMessages: Record<number, string> = {
+          1: "用户拒绝了定位权限",
+          2: "无法获取位置信息",
+          3: "定位请求超时",
+        };
+        console.error("定位失败:", errorMessages[error.code] || error.message, `(code: ${error.code})`);
         onLocateError?.(error);
         setWaitingForLocation(false);
       },

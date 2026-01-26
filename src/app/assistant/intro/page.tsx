@@ -53,7 +53,7 @@ export default function AssistantIntroPage() {
           
           <Link
             href="/assistant"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
           >
             <Navigation className="size-5" />
             开始使用
@@ -108,7 +108,7 @@ export default function AssistantIntroPage() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-6 rounded-xl bg-background border border-border hover:shadow-md transition-shadow"
+                className="p-6 rounded-xl bg-background border border-border hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 transition-all duration-200"
               >
                 <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                   <feature.icon className="size-6 text-primary" />
@@ -135,7 +135,7 @@ export default function AssistantIntroPage() {
             ].map((query, i) => (
               <div
                 key={i}
-                className="px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm"
+                className="px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm hover:bg-muted hover:border-primary/20 transition-all duration-150 cursor-default"
               >
                 &ldquo;{query}&rdquo;
               </div>
@@ -145,7 +145,7 @@ export default function AssistantIntroPage() {
           <div className="text-center mt-8">
             <Link
               href="/assistant"
-              className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 hover:gap-3 font-medium transition-all duration-200"
             >
               立即体验
               <ArrowRight className="size-4" />
