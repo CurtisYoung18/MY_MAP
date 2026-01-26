@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Send, Loader2, Navigation, Utensils, Plus, Trash2 } from "lucide-react";
+import { Send, Loader2, Navigation, Utensils, Plus, MessageSquare, MapIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -18,6 +18,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import type { RouteResult, POIResult } from "@/lib/amap";
 
+type MobileView = "chat" | "map";
+
 // 简化的 Header
 function AssistantHeader({ 
   onNewChat, 
@@ -27,20 +29,20 @@ function AssistantHeader({
   hasMessages: boolean;
 }) {
   return (
-    <header className="w-full h-14 border-b border-border bg-background/95 backdrop-blur">
-      <nav className="flex size-full items-center justify-between px-4">
-        <Link href="/assistant/intro" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Navigation className="size-5 text-primary" />
-          <span className="font-bold tracking-tight">MY_MAP</span>
+    <header className="w-full h-12 sm:h-14 border-b border-border bg-background/95 backdrop-blur shrink-0">
+      <nav className="flex size-full items-center justify-between px-3 sm:px-4">
+        <Link href="/assistant/intro" className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity">
+          <Navigation className="size-4 sm:size-5 text-primary" />
+          <span className="font-bold tracking-tight text-sm sm:text-base">MY_MAP</span>
           <span className="text-xs text-muted-foreground hidden sm:inline">智能地图助手</span>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {hasMessages && (
             <button
               onClick={onNewChat}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 active:scale-95 transition-all duration-150"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs sm:text-sm rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 active:scale-95 transition-all duration-150"
             >
-              <Plus className="size-4" />
+              <Plus className="size-3.5 sm:size-4" />
               <span className="hidden sm:inline">新对话</span>
             </button>
           )}
@@ -48,6 +50,45 @@ function AssistantHeader({
         </div>
       </nav>
     </header>
+  );
+}
+
+// 移动端底部导航
+function MobileTabBar({
+  activeView,
+  onViewChange,
+  hasRoute,
+}: {
+  activeView: MobileView;
+  onViewChange: (view: MobileView) => void;
+  hasRoute: boolean;
+}) {
+  return (
+    <div className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-background/95 backdrop-blur border-t border-border flex z-50">
+      <button
+        onClick={() => onViewChange("chat")}
+        className={cn(
+          "flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors",
+          activeView === "chat" ? "text-primary" : "text-muted-foreground"
+        )}
+      >
+        <MessageSquare className="size-5" />
+        <span className="text-[10px] font-medium">对话</span>
+      </button>
+      <button
+        onClick={() => onViewChange("map")}
+        className={cn(
+          "flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors relative",
+          activeView === "map" ? "text-primary" : "text-muted-foreground"
+        )}
+      >
+        <MapIcon className="size-5" />
+        <span className="text-[10px] font-medium">地图</span>
+        {hasRoute && activeView !== "map" && (
+          <span className="absolute top-2 right-1/4 w-2 h-2 bg-primary rounded-full" />
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -117,6 +158,7 @@ export default function AssistantPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mapData, setMapData] = useState<MapData>({});
+  const [mobileView, setMobileView] = useState<MobileView>("chat");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapRef>(null);
 
@@ -228,30 +270,48 @@ export default function AssistantPage() {
     "上海外滩到浦东机场，推荐沿途的咖啡厅",
   ];
 
+  // 当路线规划完成时，移动端自动切换到地图视图
+  useEffect(() => {
+    if (mapData.route && window.innerWidth < 768) {
+      setMobileView("map");
+    }
+  }, [mapData.route]);
+
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen h-[100dvh]">
       <AssistantHeader onNewChat={handleNewChat} hasMessages={messages.length > 0} />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* 左侧聊天面板 */}
-        <div className="w-[420px] flex flex-col border-r border-border bg-background">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* 聊天面板 */}
+        <div 
+          className={cn(
+            "flex flex-col bg-background transition-transform duration-300 ease-in-out",
+            // 移动端：全宽，通过 translate 切换
+            "absolute inset-0 md:relative md:inset-auto",
+            "w-full md:w-[420px] md:border-r md:border-border",
+            // 移动端视图切换
+            mobileView === "chat" ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+            // 移动端底部留出导航栏空间
+            "pb-14 md:pb-0"
+          )}
+        >
           {/* 聊天消息区 */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Navigation className="w-8 h-8 text-primary" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
+                  <Navigation className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
                 </div>
-                <h2 className="text-xl font-semibold mb-2">智能地图助手</h2>
-                <p className="text-muted-foreground text-sm mb-6">
+                <h2 className="text-lg sm:text-xl font-semibold mb-2">智能地图助手</h2>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                   告诉我你想去哪里，我来帮你规划路线和推荐好去处
                 </p>
-                <div className="space-y-2 w-full">
+                <div className="space-y-2 w-full max-w-sm">
                   {suggestedQueries.map((query, i) => (
                     <button
                       key={i}
                       onClick={() => setInput(query)}
-                      className="w-full text-left px-3 py-2.5 rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 hover:shadow-sm active:scale-[0.98] transition-all duration-150 text-sm"
+                      className="w-full text-left px-3 py-3 sm:py-2.5 rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 hover:shadow-sm active:scale-[0.98] active:bg-accent transition-all duration-150 text-xs sm:text-sm"
                     >
                       {query}
                     </button>
@@ -269,7 +329,7 @@ export default function AssistantPage() {
                 >
                   <div
                     className={cn(
-                      "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
+                      "max-w-[90%] sm:max-w-[85%] rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm",
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted"
@@ -286,7 +346,7 @@ export default function AssistantPage() {
             )}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-muted rounded-2xl px-4 py-2.5">
+                <div className="bg-muted rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5">
                   <Loader2 className="w-4 h-4 animate-spin" />
                 </div>
               </div>
@@ -295,20 +355,20 @@ export default function AssistantPage() {
           </div>
 
           {/* 输入区 */}
-          <div className="p-4 border-t border-border">
+          <div className="p-3 sm:p-4 border-t border-border bg-background">
             <form onSubmit={handleSubmit} className="flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="输入你的出行需求，支持全国城市..."
-                className="flex-1 px-4 py-2.5 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-150 text-sm"
+                placeholder="输入出行需求..."
+                className="flex-1 px-3 sm:px-4 py-2.5 sm:py-2.5 rounded-full border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-150 text-sm"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 hover:shadow-md active:scale-90 transition-all duration-150"
+                className="w-11 h-11 sm:w-10 sm:h-10 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 hover:shadow-md active:scale-90 transition-all duration-150"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -316,8 +376,19 @@ export default function AssistantPage() {
           </div>
         </div>
 
-        {/* 右侧地图面板 */}
-        <div className="flex-1 relative h-full">
+        {/* 地图面板 */}
+        <div 
+          className={cn(
+            "relative transition-transform duration-300 ease-in-out",
+            // 移动端：全屏，通过 translate 切换
+            "absolute inset-0 md:relative md:inset-auto",
+            "w-full md:flex-1 h-full",
+            // 移动端视图切换
+            mobileView === "map" ? "translate-x-0" : "translate-x-full md:translate-x-0",
+            // 移动端底部留出导航栏空间
+            "pb-14 md:pb-0"
+          )}
+        >
           <Map
             ref={mapRef}
             center={DEFAULT_CENTER}
@@ -442,27 +513,27 @@ export default function AssistantPage() {
 
           {/* 路线信息卡片 */}
           {mapData.route && (
-            <div className="absolute top-4 left-4 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg p-4 max-w-xs">
-              <div className="flex items-center gap-2 mb-2">
-                <Navigation className="w-4 h-4 text-primary" />
-                <span className="font-medium">路线信息</span>
+            <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg p-2.5 sm:p-4 max-w-[180px] sm:max-w-xs">
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                <Navigation className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                <span className="font-medium text-xs sm:text-sm">路线信息</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <div>
-                  <span className="text-muted-foreground">距离</span>
+                  <span className="text-muted-foreground text-[10px] sm:text-xs">距离</span>
                   <p className="font-medium">
                     {(mapData.route.distance / 1000).toFixed(1)} 公里
                   </p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">预计时间</span>
+                  <span className="text-muted-foreground text-[10px] sm:text-xs">预计时间</span>
                   <p className="font-medium">
                     {Math.round(mapData.route.duration / 60)} 分钟
                   </p>
                 </div>
                 {mapData.route.tolls > 0 && (
                   <div className="col-span-2">
-                    <span className="text-muted-foreground">过路费</span>
+                    <span className="text-muted-foreground text-[10px] sm:text-xs">过路费</span>
                     <p className="font-medium">{mapData.route.tolls} 元</p>
                   </div>
                 )}
@@ -471,6 +542,13 @@ export default function AssistantPage() {
           )}
         </div>
       </div>
+
+      {/* 移动端底部导航 */}
+      <MobileTabBar
+        activeView={mobileView}
+        onViewChange={setMobileView}
+        hasRoute={!!mapData.route}
+      />
     </div>
   );
 }

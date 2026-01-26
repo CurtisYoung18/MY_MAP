@@ -34,44 +34,44 @@ export default function AssistantIntroPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
       {/* Hero Section */}
-      <section className="relative pt-20 pb-16 px-6">
+      <section className="relative pt-12 sm:pt-20 pb-10 sm:pb-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Sparkles className="size-4" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+            <Sparkles className="size-3.5 sm:size-4" />
             <span>AI 驱动</span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-6">
             MY_MAP
           </h1>
-          <p className="text-xl text-muted-foreground mb-2">智能地图助手</p>
+          <p className="text-base sm:text-xl text-muted-foreground mb-1 sm:mb-2">智能地图助手</p>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
             告诉我你想去哪里，我来帮你规划路线和推荐好去处。
             支持全国城市，自然语言交互，让出行更简单。
           </p>
           
           <Link
             href="/assistant"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-primary text-primary-foreground font-medium text-sm sm:text-base hover:bg-primary/90 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
           >
-            <Navigation className="size-5" />
+            <Navigation className="size-4 sm:size-5" />
             开始使用
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-3.5 sm:size-4" />
           </Link>
         </div>
       </section>
 
       {/* Screenshots Section */}
-      <section className="py-16 px-6">
+      <section className="py-10 sm:py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-12">功能演示</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-12">功能演示</h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             {/* Route Planning Screenshot */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold">路线规划</h3>
-              <div className="rounded-xl overflow-hidden border border-border shadow-lg bg-background">
+            <div className="space-y-2 sm:space-y-3">
+              <h3 className="text-base sm:text-lg font-semibold">路线规划</h3>
+              <div className="rounded-lg sm:rounded-xl overflow-hidden border border-border shadow-lg bg-background">
                 <Image
                   src="/screenshots/assistant-route.png"
                   alt="路线规划演示"
@@ -83,9 +83,9 @@ export default function AssistantIntroPage() {
             </div>
             
             {/* POI Recommendation Screenshot */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold">沿途推荐</h3>
-              <div className="rounded-xl overflow-hidden border border-border shadow-lg bg-background">
+            <div className="space-y-2 sm:space-y-3">
+              <h3 className="text-base sm:text-lg font-semibold">沿途推荐</h3>
+              <div className="rounded-lg sm:rounded-xl overflow-hidden border border-border shadow-lg bg-background">
                 <Image
                   src="/screenshots/assistant-poi.png"
                   alt="沿途推荐演示"
@@ -100,21 +100,21 @@ export default function AssistantIntroPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-6 bg-muted/30">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 bg-muted/30">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-12">核心功能</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-12">核心功能</h2>
           
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-6">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-6 rounded-xl bg-background border border-border hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 transition-all duration-200"
+                className="p-3 sm:p-6 rounded-lg sm:rounded-xl bg-background border border-border hover:shadow-lg hover:border-primary/20 sm:hover:-translate-y-1 active:scale-[0.98] transition-all duration-200"
               >
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="size-6 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2 sm:mb-4">
+                  <feature.icon className="size-5 sm:size-6 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="font-semibold text-sm sm:text-base mb-1 sm:mb-2">{feature.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -122,11 +122,11 @@ export default function AssistantIntroPage() {
       </section>
 
       {/* Example Queries Section */}
-      <section className="py-16 px-6">
+      <section className="py-10 sm:py-16 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">试试这样问</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-8">试试这样问</h2>
           
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {[
               "从深圳南山科技园到龙华大浪，途经宝安沙井",
               "从北京西站到故宫怎么走",
@@ -135,28 +135,28 @@ export default function AssistantIntroPage() {
             ].map((query, i) => (
               <div
                 key={i}
-                className="px-4 py-3 rounded-lg bg-muted/50 border border-border text-sm hover:bg-muted hover:border-primary/20 transition-all duration-150 cursor-default"
+                className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-muted/50 border border-border text-xs sm:text-sm hover:bg-muted hover:border-primary/20 active:scale-[0.99] transition-all duration-150 cursor-default"
               >
                 &ldquo;{query}&rdquo;
               </div>
             ))}
           </div>
           
-          <div className="text-center mt-8">
+          <div className="text-center mt-6 sm:mt-8">
             <Link
               href="/assistant"
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 hover:gap-3 font-medium transition-all duration-200"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 hover:gap-3 font-medium text-sm sm:text-base transition-all duration-200"
             >
               立即体验
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-3.5 sm:size-4" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border">
-        <div className="max-w-5xl mx-auto text-center text-sm text-muted-foreground">
+      <footer className="py-6 sm:py-8 px-4 sm:px-6 border-t border-border">
+        <div className="max-w-5xl mx-auto text-center text-xs sm:text-sm text-muted-foreground">
           <p>MY_MAP · 基于高德地图 API 和 MiniMax AI 构建</p>
         </div>
       </footer>
