@@ -500,10 +500,14 @@ export default function AssistantPage() {
               onLocate={(coords) => {
                 console.log("定位成功:", coords);
               }}
+              onLocate={(coords) => {
+                // 定位成功后可以在聊天中提示用户
+                setInput(`我在这个位置附近，帮我推荐周边的餐厅`);
+              }}
               onLocateError={(error) => {
                 const messages: Record<number, string> = {
                   1: "您已拒绝定位权限，请在浏览器设置中允许定位",
-                  2: "无法获取位置信息，请检查设备定位功能",
+                  2: "无法获取位置（桌面电脑需要开启 Wi-Fi）\n\n您可以直接输入地点名称，如"深圳南山科技园附近的餐厅"",
                   3: "定位请求超时，请重试",
                 };
                 alert(messages[error.code] || "定位失败，请重试");
