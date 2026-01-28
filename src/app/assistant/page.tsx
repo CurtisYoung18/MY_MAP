@@ -163,12 +163,57 @@ interface MapData {
 // 默认中国中心坐标
 const DEFAULT_CENTER: [number, number] = [116.4074, 39.9042];
 
-// 地图样式配置
-// MapTiler 支持多语言，使用 language=zh 显示中文
-const MAPTILER_KEY = "qm9HVCYwIq04UgPI6EbV";
+// 高德地图瓦片样式（原生中文标签）
 const mapStyles = {
-  light: `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
-  dark: `https://api.maptiler.com/maps/streets-dark/style.json?key=${MAPTILER_KEY}`,
+  light: {
+    version: 8 as const,
+    sources: {
+      amap: {
+        type: "raster" as const,
+        tiles: [
+          "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+          "https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+          "https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+          "https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+        ],
+        tileSize: 256,
+      },
+    },
+    layers: [
+      {
+        id: "amap-tiles",
+        type: "raster" as const,
+        source: "amap",
+        minzoom: 0,
+        maxzoom: 18,
+      },
+    ],
+  },
+  dark: {
+    version: 8 as const,
+    sources: {
+      amap: {
+        type: "raster" as const,
+        tiles: [
+          // 高德暗色地图
+          "https://wprd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+          "https://wprd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+          "https://wprd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+          "https://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+        ],
+        tileSize: 256,
+      },
+    },
+    layers: [
+      {
+        id: "amap-tiles",
+        type: "raster" as const,
+        source: "amap",
+        minzoom: 0,
+        maxzoom: 18,
+      },
+    ],
+  },
 };
 
 export default function AssistantPage() {
