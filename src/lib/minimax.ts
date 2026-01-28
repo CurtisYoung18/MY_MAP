@@ -5,11 +5,22 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 
-// MiniMax 使用 Anthropic API 兼容模式
-const client = new Anthropic({
-  baseURL: "https://api.minimaxi.com/anthropic",
-  apiKey: process.env.MINIMAX_API_KEY || "",
-});
+// MiniMax 使用 Anthropic API 兼容模式 - 延迟初始化以确保环境变量已加载
+let _client: Anthropic | null = null;
+
+function getClient(): Anthropic {
+  if (!_client) {
+    const apiKey = process.env.MINIMAX_API_KEY;
+    if (!apiKey) {
+      throw new Error("MINIMAX_API_KEY 未设置，请检查 .env.local 文件");
+    }
+    _client = new Anthropic({
+      baseURL: "https://api.minimaxi.com/anthropic",
+      apiKey,
+    });
+  }
+  return _client;
+}
 
 export interface Message {
   role: "user" | "assistant";
@@ -134,7 +145,7 @@ export async function chat(
     content: m.content,
   }));
 
-  const response = await client.messages.create({
+  const response = await getClient().messages.create({
     model: "MiniMax-M2.1",
     max_tokens: 4096,
     system: MAP_ASSISTANT_SYSTEM_PROMPT,
@@ -158,7 +169,7 @@ export async function chatWithToolLoop(
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: "MiniMax-M2.1",
       max_tokens: 4096,
       system: MAP_ASSISTANT_SYSTEM_PROMPT,
