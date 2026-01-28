@@ -246,11 +246,11 @@ function MapStyleSwitcher({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute top-2 right-14 sm:top-4 sm:right-4 z-30">
+    <div className="absolute bottom-20 md:bottom-auto md:top-4 left-2 md:left-auto md:right-4 z-30">
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1.5 px-2 py-1.5 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg hover:bg-accent active:scale-95 transition-all text-xs"
+          className="flex items-center gap-1.5 px-2.5 py-2 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg hover:bg-accent active:scale-95 transition-all text-sm font-medium"
         >
           <Layers className="size-4" />
           <span>{MAP_STYLE_OPTIONS[currentStyle].label}</span>
@@ -259,7 +259,7 @@ function MapStyleSwitcher({
         {isOpen && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
-            <div className="absolute right-0 mt-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg overflow-hidden z-40 min-w-[130px]">
+            <div className="absolute left-0 md:left-auto md:right-0 bottom-full md:bottom-auto md:top-full mb-1 md:mb-0 md:mt-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg overflow-hidden z-40 min-w-[140px]">
               {(Object.keys(MAP_STYLE_OPTIONS) as MapStyleType[]).map((styleKey) => (
                 <button
                   key={styleKey}
@@ -268,7 +268,7 @@ function MapStyleSwitcher({
                     setIsOpen(false);
                   }}
                   className={cn(
-                    "w-full px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors flex items-center justify-between",
+                    "w-full px-3 py-2.5 text-left text-sm hover:bg-accent active:bg-accent/80 transition-colors flex items-center justify-between",
                     currentStyle === styleKey && "bg-accent font-medium"
                   )}
                 >
