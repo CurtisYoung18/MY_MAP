@@ -45,17 +45,17 @@ export interface ToolDefinition {
 export const mapAssistantTools: ToolDefinition[] = [
   {
     name: "geocode",
-    description: "将地址转换为坐标，或将坐标转换为地址。用于解析用户提供的地点名称。",
+    description: "将地址转换为坐标并在地图上标记位置。当用户只提供单个地点想查看位置时使用此工具。",
     input_schema: {
       type: "object",
       properties: {
         address: {
           type: "string",
-          description: "要转换的地址，如 '深圳湾科技园'、'龙华大浪'",
+          description: "要标记的地址，如 '深圳湾科技园'、'龙华大浪'、'北京天安门'",
         },
         city: {
           type: "string",
-          description: "城市名称，如 '深圳'，用于提高地址解析准确性",
+          description: "城市名称，如 '深圳'，用于提高地址解析准确性（可选）",
         },
       },
       required: ["address"],
@@ -108,12 +108,13 @@ export const mapAssistantTools: ToolDefinition[] = [
 export const MAP_ASSISTANT_SYSTEM_PROMPT = `你是一个专业的中国地图助手，帮助用户规划出行路线和推荐沿途的好去处。支持全国所有城市。
 
 你的能力：
-1. 地址解析：将地名转换为精确坐标
+1. 地址解析：将地名转换为精确坐标，并在地图上标记位置
 2. 路线规划：规划驾车路线，支持途经点
 3. POI 搜索：沿途搜索餐厅、加油站等，并按评分推荐
 
 使用说明：
-- 当用户提供起点、终点时，调用 plan_driving_route 规划路线
+- **查看位置**：当用户只提供单个地点名称时（如"大浪"、"深圳湾"），调用 geocode 在地图上标记该位置
+- **路线规划**：当用户提供起点、终点时，调用 plan_driving_route 规划路线
 - 地址中应包含城市名称，如"北京西站"、"上海外滩"、"深圳南山科技园"
 - 如果用户需要途经某地，将途经点加入 waypoints 参数
 - 规划路线后，如果用户需要推荐餐厅或其他服务，调用 search_poi_along_route
@@ -121,7 +122,7 @@ export const MAP_ASSISTANT_SYSTEM_PROMPT = `你是一个专业的中国地图助
 
 注意：
 - 支持全国所有城市，跨城市路线也可以规划
-- 路线规划完成后，会自动在地图上显示
+- 调用 geocode 或路线规划后，位置/路线会自动在地图上显示
 - 推荐餐厅时，优先推荐评分高的
 - 使用中文回复
 - 回复使用 Markdown 格式，便于阅读`;

@@ -18,6 +18,15 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 import type { RouteResult, POIResult } from "@/lib/amap";
 
+// 标记点类型
+interface MarkerData {
+  id: string;
+  name: string;
+  location: [number, number];
+  address?: string;
+  type?: "location" | "origin" | "destination" | "waypoint";
+}
+
 type MobileView = "chat" | "map";
 
 // 简化的 Header
@@ -148,6 +157,7 @@ interface Message {
 interface MapData {
   route?: RouteResult;
   pois?: POIResult[];
+  markers?: MarkerData[];
 }
 
 // 默认中国中心坐标
@@ -251,7 +261,22 @@ export default function AssistantPage() {
           setMapData((prev) => ({
             route: data.mapData.route || prev.route,
             pois: data.mapData.pois || prev.pois,
+            markers: data.mapData.markers || prev.markers,
           }));
+          
+          // 如果有新标记，移动地图到标记位置
+          if (data.mapData.markers?.length && mapRef.current) {
+            const marker = data.mapData.markers[0];
+            mapRef.current.flyTo({
+              center: marker.location,
+              zoom: 14,
+              duration: 1000,
+            });
+            // 移动端自动切换到地图视图
+            if (window.innerWidth < 768) {
+              setMobileView("map");
+            }
+          }
         }
       }
     } catch {
@@ -454,6 +479,31 @@ export default function AssistantPage() {
               </MapMarker>
             ))}
 
+            {/* 位置标记（地理编码结果） */}
+            {mapData.markers?.map((marker) => (
+              <MapMarker
+                key={marker.id}
+                longitude={marker.location[0]}
+                latitude={marker.location[1]}
+              >
+                <MarkerContent>
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-lg">
+                    <Navigation className="w-4 h-4 text-white" />
+                  </div>
+                </MarkerContent>
+                <MarkerPopup className="min-w-[180px]">
+                  <div className="space-y-1">
+                    <div className="font-medium">{marker.name}</div>
+                    {marker.address && (
+                      <div className="text-xs text-muted-foreground">
+                        {marker.address}
+                      </div>
+                    )}
+                  </div>
+                </MarkerPopup>
+              </MapMarker>
+            ))}
+
             {/* POI 标记 */}
             {mapData.pois?.map((poi) => (
               <MapMarker
@@ -549,7 +599,7 @@ export default function AssistantPage() {
       <MobileTabBar
         activeView={mobileView}
         onViewChange={setMobileView}
-        hasRoute={!!mapData.route}
+        hasRoute={!!mapData.route || !!mapData.markers?.length}
       />
     </div>
   );

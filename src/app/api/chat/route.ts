@@ -7,7 +7,17 @@ import {
   POI_TYPES,
   type RouteResult,
   type POIResult,
+  type GeocodeResult,
 } from "@/lib/amap";
+
+// 标记点类型
+export interface MarkerData {
+  id: string;
+  name: string;
+  location: [number, number]; // WGS-84
+  address?: string;
+  type?: "location" | "origin" | "destination" | "waypoint";
+}
 
 // 存储当前会话的路线数据（简单实现，生产环境应使用数据库或 Redis）
 let currentRoute: RouteResult | null = null;
@@ -16,13 +26,28 @@ let currentRoute: RouteResult | null = null;
 async function executeToolCall(
   name: string,
   input: Record<string, unknown>
-): Promise<{ result: unknown; mapData?: { route?: RouteResult; pois?: POIResult[] } }> {
+): Promise<{ result: unknown; mapData?: { route?: RouteResult; pois?: POIResult[]; markers?: MarkerData[] } }> {
   switch (name) {
     case "geocode": {
       const result = await geocode(
         input.address as string,
         input.city as string | undefined
       );
+      
+      // 如果解析成功，返回标记数据用于地图显示
+      if (result) {
+        const marker: MarkerData = {
+          id: `geocode-${Date.now()}`,
+          name: input.address as string,
+          location: result.location,
+          address: result.formatted_address,
+          type: "location",
+        };
+        return { 
+          result, 
+          mapData: { markers: [marker] } 
+        };
+      }
       return { result };
     }
 
