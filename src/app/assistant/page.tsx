@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Send, Loader2, Navigation, Utensils, Plus, MessageSquare, MapIcon } from "lucide-react";
+import { Send, Loader2, Navigation, Utensils, Plus, MessageSquare, MapIcon, Layers } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -163,58 +163,126 @@ interface MapData {
 // 默认中国中心坐标
 const DEFAULT_CENTER: [number, number] = [116.4074, 39.9042];
 
-// 高德地图瓦片样式（原生中文标签）
-const mapStyles = {
-  light: {
-    version: 8 as const,
-    sources: {
-      amap: {
-        type: "raster" as const,
-        tiles: [
-          "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-          "https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-          "https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-          "https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-        ],
-        tileSize: 256,
+// 地图样式类型
+type MapStyleType = "amap" | "maptiler" | "carto";
+
+// MapTiler API Key
+const MAPTILER_KEY = "qm9HVCYwIq04UgPI6EbV";
+
+// 地图样式配置类型
+type MapStyleConfig = string | {
+  version: 8;
+  sources: Record<string, { type: "raster"; tiles: string[]; tileSize: number }>;
+  layers: { id: string; type: "raster"; source: string; minzoom: number; maxzoom: number }[];
+};
+
+// 所有地图样式配置
+const MAP_STYLE_OPTIONS: Record<MapStyleType, { name: string; label: string; styles: { light: MapStyleConfig; dark: MapStyleConfig } }> = {
+  amap: {
+    name: "高德地图",
+    label: "中文",
+    styles: {
+      light: {
+        version: 8 as const,
+        sources: {
+          amap: {
+            type: "raster" as const,
+            tiles: [
+              "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+            ],
+            tileSize: 256,
+          },
+        },
+        layers: [{ id: "amap-tiles", type: "raster" as const, source: "amap", minzoom: 0, maxzoom: 18 }],
+      },
+      dark: {
+        version: 8 as const,
+        sources: {
+          amap: {
+            type: "raster" as const,
+            tiles: [
+              "https://wprd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+              "https://wprd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+              "https://wprd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+              "https://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+            ],
+            tileSize: 256,
+          },
+        },
+        layers: [{ id: "amap-tiles", type: "raster" as const, source: "amap", minzoom: 0, maxzoom: 18 }],
       },
     },
-    layers: [
-      {
-        id: "amap-tiles",
-        type: "raster" as const,
-        source: "amap",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-    ],
   },
-  dark: {
-    version: 8 as const,
-    sources: {
-      amap: {
-        type: "raster" as const,
-        tiles: [
-          // 高德暗色地图
-          "https://wprd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-          "https://wprd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-          "https://wprd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-          "https://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-        ],
-        tileSize: 256,
-      },
+  maptiler: {
+    name: "MapTiler",
+    label: "矢量",
+    styles: {
+      light: `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
+      dark: `https://api.maptiler.com/maps/streets-dark/style.json?key=${MAPTILER_KEY}`,
     },
-    layers: [
-      {
-        id: "amap-tiles",
-        type: "raster" as const,
-        source: "amap",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-    ],
+  },
+  carto: {
+    name: "Carto",
+    label: "简洁",
+    styles: {
+      light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+    },
   },
 };
+
+// 地图样式切换器组件
+function MapStyleSwitcher({
+  currentStyle,
+  onStyleChange,
+}: {
+  currentStyle: MapStyleType;
+  onStyleChange: (style: MapStyleType) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10">
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg hover:bg-accent active:scale-95 transition-all text-xs sm:text-sm"
+        >
+          <Layers className="size-3.5 sm:size-4" />
+          <span className="hidden sm:inline">{MAP_STYLE_OPTIONS[currentStyle].name}</span>
+          <span className="sm:hidden">{MAP_STYLE_OPTIONS[currentStyle].label}</span>
+        </button>
+        
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+            <div className="absolute right-0 mt-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg overflow-hidden z-20 min-w-[120px]">
+              {(Object.keys(MAP_STYLE_OPTIONS) as MapStyleType[]).map((styleKey) => (
+                <button
+                  key={styleKey}
+                  onClick={() => {
+                    onStyleChange(styleKey);
+                    setIsOpen(false);
+                  }}
+                  className={cn(
+                    "w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-accent transition-colors flex items-center justify-between",
+                    currentStyle === styleKey && "bg-accent font-medium"
+                  )}
+                >
+                  <span>{MAP_STYLE_OPTIONS[styleKey].name}</span>
+                  <span className="text-muted-foreground text-[10px] sm:text-xs">{MAP_STYLE_OPTIONS[styleKey].label}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -222,8 +290,12 @@ export default function AssistantPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mapData, setMapData] = useState<MapData>({});
   const [mobileView, setMobileView] = useState<MobileView>("chat");
+  const [mapStyle, setMapStyle] = useState<MapStyleType>("amap"); // 默认高德地图
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapRef>(null);
+  
+  // 获取当前地图样式
+  const currentMapStyles = MAP_STYLE_OPTIONS[mapStyle].styles;
 
   // 新建对话
   const handleNewChat = useCallback(() => {
@@ -471,7 +543,7 @@ export default function AssistantPage() {
             ref={mapRef}
             center={DEFAULT_CENTER}
             zoom={4}
-            styles={mapStyles}
+            styles={currentMapStyles}
           >
             {/* 路线 */}
             {mapData.route && (
@@ -616,6 +688,9 @@ export default function AssistantPage() {
               }}
             />
           </Map>
+
+          {/* 地图样式切换器 */}
+          <MapStyleSwitcher currentStyle={mapStyle} onStyleChange={setMapStyle} />
 
           {/* 路线信息卡片 */}
           {mapData.route && (
