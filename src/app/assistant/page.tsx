@@ -163,6 +163,19 @@ interface MapData {
 // 默认中国中心坐标
 const DEFAULT_CENTER: [number, number] = [116.4074, 39.9042];
 
+// 中文地图样式（MapTiler）
+const getMapStyles = () => {
+  const maptilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY;
+  if (maptilerKey) {
+    return {
+      light: `https://api.maptiler.com/maps/streets-v2/style.json?key=${maptilerKey}&language=zh`,
+      dark: `https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${maptilerKey}&language=zh`,
+    };
+  }
+  // 无 MapTiler key 时使用默认样式（拼音标签）
+  return undefined;
+};
+
 export default function AssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -418,6 +431,7 @@ export default function AssistantPage() {
             ref={mapRef}
             center={DEFAULT_CENTER}
             zoom={4}
+            styles={getMapStyles()}
           >
             {/* 路线 */}
             {mapData.route && (
