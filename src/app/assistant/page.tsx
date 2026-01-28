@@ -163,81 +163,12 @@ interface MapData {
 // 默认中国中心坐标
 const DEFAULT_CENTER: [number, number] = [116.4074, 39.9042];
 
-// 中文地图样式（天地图 - 原生中文标签）
-// 天地图 API Key（可在 https://www.tianditu.gov.cn/ 免费申请）
-const TIANDITU_KEY = "6e5e9a219e95c6a8e4e0952b4dfca62c"; // 公共测试 key
-
+// 地图样式配置
+// MapTiler 支持多语言，使用 language=zh 显示中文
+const MAPTILER_KEY = "qm9HVCYwIq04UgPI6EbV";
 const mapStyles = {
-  light: {
-    version: 8 as const,
-    sources: {
-      tianditu_vec: {
-        type: "raster" as const,
-        tiles: [
-          `https://t0.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_KEY}`,
-        ],
-        tileSize: 256,
-      },
-      tianditu_cva: {
-        type: "raster" as const,
-        tiles: [
-          `https://t0.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_KEY}`,
-        ],
-        tileSize: 256,
-      },
-    },
-    layers: [
-      {
-        id: "tianditu_vec",
-        type: "raster" as const,
-        source: "tianditu_vec",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-      {
-        id: "tianditu_cva",
-        type: "raster" as const,
-        source: "tianditu_cva",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-    ],
-  },
-  dark: {
-    version: 8 as const,
-    sources: {
-      tianditu_vec: {
-        type: "raster" as const,
-        tiles: [
-          `https://t0.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_KEY}`,
-        ],
-        tileSize: 256,
-      },
-      tianditu_cva: {
-        type: "raster" as const,
-        tiles: [
-          `https://t0.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=${TIANDITU_KEY}`,
-        ],
-        tileSize: 256,
-      },
-    },
-    layers: [
-      {
-        id: "tianditu_vec",
-        type: "raster" as const,
-        source: "tianditu_vec",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-      {
-        id: "tianditu_cva",
-        type: "raster" as const,
-        source: "tianditu_cva",
-        minzoom: 0,
-        maxzoom: 18,
-      },
-    ],
-  },
+  light: `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
+  dark: `https://api.maptiler.com/maps/streets-dark/style.json?key=${MAPTILER_KEY}`,
 };
 
 export default function AssistantPage() {
