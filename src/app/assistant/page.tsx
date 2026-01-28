@@ -204,10 +204,11 @@ const MAP_STYLE_OPTIONS: Record<MapStyleType, { name: string; label: string; sty
           amap: {
             type: "raster" as const,
             tiles: [
-              "https://wprd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-              "https://wprd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-              "https://wprd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
-              "https://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}&ltype=4",
+              // 暗色模式使用普通地图（ltype=4 太暗）
+              "https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+              "https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
             ],
             tileSize: 256,
           },
@@ -245,21 +246,20 @@ function MapStyleSwitcher({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10">
+    <div className="absolute top-2 right-14 sm:top-4 sm:right-4 z-30">
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg hover:bg-accent active:scale-95 transition-all text-xs sm:text-sm"
+          className="flex items-center gap-1.5 px-2 py-1.5 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg hover:bg-accent active:scale-95 transition-all text-xs"
         >
-          <Layers className="size-3.5 sm:size-4" />
-          <span className="hidden sm:inline">{MAP_STYLE_OPTIONS[currentStyle].name}</span>
-          <span className="sm:hidden">{MAP_STYLE_OPTIONS[currentStyle].label}</span>
+          <Layers className="size-4" />
+          <span>{MAP_STYLE_OPTIONS[currentStyle].label}</span>
         </button>
         
         {isOpen && (
           <>
-            <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-            <div className="absolute right-0 mt-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg overflow-hidden z-20 min-w-[120px]">
+            <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
+            <div className="absolute right-0 mt-1 bg-background/95 backdrop-blur rounded-lg border border-border shadow-lg overflow-hidden z-40 min-w-[130px]">
               {(Object.keys(MAP_STYLE_OPTIONS) as MapStyleType[]).map((styleKey) => (
                 <button
                   key={styleKey}
@@ -268,12 +268,12 @@ function MapStyleSwitcher({
                     setIsOpen(false);
                   }}
                   className={cn(
-                    "w-full px-3 py-2 text-left text-xs sm:text-sm hover:bg-accent transition-colors flex items-center justify-between",
+                    "w-full px-3 py-2.5 text-left text-sm hover:bg-accent transition-colors flex items-center justify-between",
                     currentStyle === styleKey && "bg-accent font-medium"
                   )}
                 >
                   <span>{MAP_STYLE_OPTIONS[styleKey].name}</span>
-                  <span className="text-muted-foreground text-[10px] sm:text-xs">{MAP_STYLE_OPTIONS[styleKey].label}</span>
+                  <span className="text-muted-foreground text-xs">{MAP_STYLE_OPTIONS[styleKey].label}</span>
                 </button>
               ))}
             </div>
