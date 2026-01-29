@@ -428,10 +428,10 @@ export default function AssistantPage() {
   }, [mapData.route]);
 
   return (
-    <div className="flex flex-col h-screen h-[100dvh]">
+    <div className="fixed inset-0 flex flex-col overflow-hidden">
       <AssistantHeader onNewChat={handleNewChat} hasMessages={messages.length > 0} />
 
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative min-h-0">
         {/* 聊天面板 */}
         <div 
           className={cn(
