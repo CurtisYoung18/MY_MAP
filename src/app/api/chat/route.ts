@@ -26,8 +26,19 @@ let currentRoute: RouteResult | null = null;
 async function executeToolCall(
   name: string,
   input: Record<string, unknown>
-): Promise<{ result: unknown; mapData?: { route?: RouteResult; pois?: POIResult[]; markers?: MarkerData[] } }> {
+): Promise<{ result: unknown; mapData?: { route?: RouteResult; pois?: POIResult[]; markers?: MarkerData[] }; requestLocation?: boolean }> {
   switch (name) {
+    case "request_user_location": {
+      // 返回特殊标记，告诉前端需要请求用户位置
+      return {
+        result: {
+          status: "requesting",
+          message: input.reason || "需要获取您的位置",
+        },
+        requestLocation: true,
+      };
+    }
+
     case "geocode": {
       const result = await geocode(
         input.address as string,
@@ -156,11 +167,12 @@ export async function POST(request: NextRequest) {
     }));
 
     // 调用 AI 并处理工具调用
-    const { content, mapData } = await chatWithToolLoop(messages, executeToolCall);
+    const { content, mapData, requestLocation } = await chatWithToolLoop(messages, executeToolCall);
 
     return NextResponse.json({
       message: content,
       mapData,
+      requestLocation,
     });
   } catch (error) {
     console.error("Chat API error:", error);

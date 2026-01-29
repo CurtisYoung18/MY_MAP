@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Send, Loader2, Navigation, Utensils, Plus, MessageSquare, MapIcon, Layers } from "lucide-react";
+import { Send, Loader2, Navigation, Utensils, Plus, MessageSquare, MapIcon, Layers, MapPin } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -376,10 +376,88 @@ export default function AssistantPage() {
           { role: "assistant", content: `**错误**: ${data.error}` },
         ]);
       } else {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.message || "抱歉，我没有理解你的问题。" },
-        ]);
+        // 检查是否需要请求用户位置
+        if (data.requestLocation) {
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: "📍 正在获取您的位置..." },
+          ]);
+          
+          // 请求用户位置
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              async (position) => {
+                const { longitude, latitude } = position.coords;
+                
+                // 在地图上标记用户位置
+                const userMarker: MarkerData = {
+                  id: `user-location-${Date.now()}`,
+                  name: "我的位置",
+                  location: [longitude, latitude],
+                  type: "location",
+                };
+                setMapData((prev) => ({
+                  ...prev,
+                  markers: [userMarker, ...(prev.markers || [])],
+                }));
+                
+                // 移动地图到用户位置
+                if (mapRef.current) {
+                  mapRef.current.flyTo({
+                    center: [longitude, latitude],
+                    zoom: 14,
+                    duration: 1000,
+                  });
+                }
+                
+                // 移动端切换到地图视图
+                if (window.innerWidth < 768) {
+                  setMobileView("map");
+                }
+                
+                // 更新消息，告诉用户位置已获取
+                setMessages((prev) => {
+                  const newMessages = [...prev];
+                  newMessages[newMessages.length - 1] = {
+                    role: "assistant",
+                    content: `📍 已获取您的位置并标记在地图上！\n\n您可以继续告诉我目的地，我来帮您规划路线。`,
+                  };
+                  return newMessages;
+                });
+              },
+              (error) => {
+                const errorMessages: Record<number, string> = {
+                  1: "您拒绝了定位权限",
+                  2: "无法获取位置（请检查设备定位功能）",
+                  3: "定位超时",
+                };
+                setMessages((prev) => {
+                  const newMessages = [...prev];
+                  newMessages[newMessages.length - 1] = {
+                    role: "assistant",
+                    content: `📍 ${errorMessages[error.code] || "定位失败"}\n\n您可以直接输入起点地址，比如「从深圳南山科技园到...」`,
+                  };
+                  return newMessages;
+                });
+              },
+              { enableHighAccuracy: true, timeout: 10000 }
+            );
+          } else {
+            setMessages((prev) => {
+              const newMessages = [...prev];
+              newMessages[newMessages.length - 1] = {
+                role: "assistant",
+                content: "📍 您的浏览器不支持定位功能\n\n请直接输入起点地址，比如「从深圳南山科技园到...」",
+              };
+              return newMessages;
+            });
+          }
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: data.message || "抱歉，我没有理解你的问题。" },
+          ]);
+        }
 
         // 更新地图数据
         if (data.mapData) {

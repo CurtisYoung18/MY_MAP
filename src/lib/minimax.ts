@@ -102,6 +102,20 @@ export const mapAssistantTools: ToolDefinition[] = [
       required: ["keywords"],
     },
   },
+  {
+    name: "request_user_location",
+    description: "请求获取用户的当前位置。当用户说「我的位置」「我在哪」「从我这里」「当前位置」等需要知道用户位置时调用此工具。",
+    input_schema: {
+      type: "object",
+      properties: {
+        reason: {
+          type: "string",
+          description: "请求定位的原因",
+        },
+      },
+      required: ["reason"],
+    },
+  },
 ];
 
 // 系统提示词
@@ -111,8 +125,10 @@ export const MAP_ASSISTANT_SYSTEM_PROMPT = `你是一个专业的中国地图助
 1. 地址解析：将地名转换为精确坐标，并在地图上标记位置
 2. 路线规划：规划驾车路线，支持途经点
 3. POI 搜索：沿途搜索餐厅、加油站等，并按评分推荐
+4. 获取用户位置：请求用户的当前位置
 
 使用说明：
+- **获取用户位置**：当用户说"我的位置"、"我在哪"、"从我这里出发"、"当前位置"时，**必须**先调用 request_user_location 获取用户位置
 - **查看位置**：当用户只提供单个地点名称时（如"大浪"、"深圳湾"），调用 geocode 在地图上标记该位置
 - **路线规划**：当用户提供起点、终点时，调用 plan_driving_route 规划路线
 - 地址中应包含城市名称，如"北京西站"、"上海外滩"、"深圳南山科技园"
@@ -123,6 +139,7 @@ export const MAP_ASSISTANT_SYSTEM_PROMPT = `你是一个专业的中国地图助
 注意：
 - 支持全国所有城市，跨城市路线也可以规划
 - 调用 geocode 或路线规划后，位置/路线会自动在地图上显示
+- 用户位置获取后会自动在地图上标记
 - 推荐餐厅时，优先推荐评分高的
 - 使用中文回复
 - 回复使用 Markdown 格式，便于阅读`;
@@ -160,13 +177,14 @@ export async function chat(
 export async function chatWithToolLoop(
   userMessages: Message[],
   executeToolCall: (name: string, input: Record<string, unknown>) => Promise<unknown>
-): Promise<{ content: string; mapData: Record<string, unknown> }> {
+): Promise<{ content: string; mapData: Record<string, unknown>; requestLocation?: boolean }> {
   const messages: Anthropic.MessageParam[] = userMessages.map((m) => ({
     role: m.role as "user" | "assistant",
     content: m.content,
   }));
 
   let mapData: Record<string, unknown> = {};
+  let requestLocation = false;
   const maxIterations = 5;
 
   for (let i = 0; i < maxIterations; i++) {
@@ -189,7 +207,7 @@ export async function chatWithToolLoop(
         (block): block is Anthropic.TextBlock => block.type === "text"
       );
       const content = textBlocks.map((b) => b.text).join("\n");
-      return { content, mapData };
+      return { content, mapData, requestLocation };
     }
 
     // 处理工具调用
@@ -207,11 +225,14 @@ export async function chatWithToolLoop(
           toolUse.input as Record<string, unknown>
         );
 
-        // 收集 mapData
+        // 收集 mapData 和 requestLocation
         if (typeof result === "object" && result !== null) {
           const resultObj = result as Record<string, unknown>;
           if (resultObj.mapData) {
             mapData = { ...mapData, ...(resultObj.mapData as Record<string, unknown>) };
+          }
+          if (resultObj.requestLocation) {
+            requestLocation = true;
           }
         }
 
@@ -240,5 +261,5 @@ export async function chatWithToolLoop(
     });
   }
 
-  return { content: "抱歉，处理超时，请重试。", mapData };
+  return { content: "抱歉，处理超时，请重试。", mapData, requestLocation };
 }
