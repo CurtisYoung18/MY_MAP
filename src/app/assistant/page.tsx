@@ -428,7 +428,7 @@ export default function AssistantPage() {
   }, [mapData.route]);
 
   return (
-    <div className="fixed inset-0 flex flex-col overflow-hidden">
+    <div className="flex flex-col h-screen md:h-screen h-[100dvh] overflow-hidden">
       <AssistantHeader onNewChat={handleNewChat} hasMessages={messages.length > 0} />
 
       <div className="flex-1 flex overflow-hidden relative min-h-0">
@@ -448,26 +448,44 @@ export default function AssistantPage() {
           {/* 聊天消息区 */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
-                  <Navigation className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+              <>
+                {/* 移动端：简洁提示 */}
+                <div className="md:hidden flex flex-col items-center justify-center h-full text-center">
+                  <p className="text-muted-foreground text-sm mb-4">输入目的地开始规划</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {["深圳南山", "北京故宫", "上海外滩"].map((place) => (
+                      <button
+                        key={place}
+                        onClick={() => setInput(`从我的位置到${place}怎么走`)}
+                        className="px-3 py-1.5 rounded-full bg-muted text-xs active:scale-95 transition-transform"
+                      >
+                        {place}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-2">智能地图助手</h2>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
-                  告诉我你想去哪里，我来帮你规划路线和推荐好去处
-                </p>
-                <div className="space-y-2 w-full max-w-sm">
-                  {suggestedQueries.map((query, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setInput(query)}
-                      className="w-full text-left px-3 py-3 sm:py-2.5 rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 hover:shadow-sm active:scale-[0.98] active:bg-accent transition-all duration-150 text-xs sm:text-sm"
-                    >
-                      {query}
-                    </button>
-                  ))}
+                {/* PC端：完整介绍 */}
+                <div className="hidden md:flex h-full flex-col items-center justify-center text-center px-4">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <Navigation className="w-8 h-8 text-primary" />
+                  </div>
+                  <h2 className="text-xl font-semibold mb-2">智能地图助手</h2>
+                  <p className="text-muted-foreground text-sm mb-6">
+                    告诉我你想去哪里，我来帮你规划路线和推荐好去处
+                  </p>
+                  <div className="space-y-2 w-full max-w-sm">
+                    {suggestedQueries.map((query, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setInput(query)}
+                        className="w-full text-left px-3 py-2.5 rounded-lg border border-border hover:bg-accent hover:border-accent-foreground/20 hover:shadow-sm active:scale-[0.98] active:bg-accent transition-all duration-150 text-sm"
+                      >
+                        {query}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </>
             ) : (
               messages.map((message, i) => (
                 <div
